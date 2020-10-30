@@ -12,3 +12,4 @@ class MyTest(models.Model):
     patient = models.CharField(max_length=80, blank=True, null=True)
     type = models.CharField(max_length=30, blank=True, null=True)
     detail = models.JSONField() # default=my_default
+    #dev上更新的一点东西
