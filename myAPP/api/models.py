@@ -7,9 +7,9 @@ def my_default():
     return {'foo': 'bar'}
 
 
-class DoctorInfo(models.Model):
+class Profile(models.Model):
     """
-    医生信息表
+    用户详细信息表
     """
     Sex_Choice = (
         ('male', '男'),
@@ -52,7 +52,7 @@ class GrossDiagnosisModel(models.Model):
         ('Diagnosis', '诊断模版')
     )
     id = models.AutoField(primary_key=True)
-    doctor = models.ForeignKey(DoctorInfo, on_delete=models.CASCADE, related_name='models_of')
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='models_of')
     category = models.CharField(choices=Model_Choice, default='Gross', max_length=20)
     name = models.CharField(max_length=80, blank=False, null=False)
     detail = models.JSONField(default=my_default)
@@ -75,7 +75,7 @@ class GrossReport(models.Model):
     大体报告表
     """
     id = models.AutoField(primary_key=True)
-    doctor = models.ForeignKey(DoctorInfo, on_delete=models.CASCADE, related_name='gross_report_by')
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='gross_report_by')
     medicalFile = models.ForeignKey(MedicalFile, on_delete=models.CASCADE, related_name='gross_report_for')
     detail = models.JSONField(default=my_default)
     created = models.DateTimeField(auto_now_add=True)
@@ -115,7 +115,7 @@ class DiagnosisReport(models.Model):
         ('2', '特诊报告'),
     )
     id = models.AutoField(primary_key=True)
-    doctor = models.ForeignKey(DoctorInfo, on_delete=models.CASCADE, related_name='diagnosis_report_by')
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='diagnosis_report_by')
     category = models.CharField(choices=Model_Choice, default='0', max_length=20)
     medicalFile = models.ForeignKey(MedicalFile, on_delete=models.CASCADE, related_name='diagnosis_report_for')
     detail = models.JSONField(default=my_default)
