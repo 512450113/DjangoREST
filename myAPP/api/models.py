@@ -86,6 +86,7 @@ class Materials(models.Model):
     取材信息表
     """
     id = models.AutoField(primary_key=True)
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='materials_by')
     area = models.CharField(max_length=80, blank=False, null=False)
     request = models.CharField(max_length=80, blank=False, null=False)
     grossReport = models.ForeignKey(GrossReport, on_delete=models.CASCADE, related_name='materials_of')
@@ -98,6 +99,7 @@ class Biopsy(models.Model):
     切片信息表
     """
     id = models.AutoField(primary_key=True)
+    operator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='biopsy_by')
     area = models.CharField(max_length=80, blank=False, null=False)
     dyeingMethod = models.CharField(max_length=80, blank=False, null=False)
     materials = models.ForeignKey(Materials, on_delete=models.CASCADE, related_name='biopsy_of')
