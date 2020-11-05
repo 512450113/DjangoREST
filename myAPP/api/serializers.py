@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     创建用户，自定义create，要求同时创建医生的个人信息表
     """
+
     class Meta:
         model = User
         fields = ('id', 'username', 'password',)
@@ -41,6 +42,8 @@ class UserProfileListSerializer(serializers.ModelSerializer):
     概括，用于列表展示
     医生的个人信息表
     """
+    user = serializers.CharField(source='user.username')
+
     class Meta:
         model = Profile
         fields = ('id', 'name', 'sex', 'user')
@@ -92,6 +95,7 @@ class GrossDiagnosisModelListSerializer(serializers.ModelSerializer):
     诊断/大体模板表
     列表，粗略
     """
+    doctor = serializers.CharField(source='doctor.doctor_info_of.name')
 
     class Meta:
         model = GrossDiagnosisModel
@@ -104,6 +108,7 @@ class GrossDiagnosisModelSerializer(serializers.ModelSerializer):
     GrossDiagnosisModel序列器
     诊断/大体模板表
     """
+    doctor = serializers.CharField(source='doctor.doctor_info_of.name')
 
     class Meta:
         model = GrossDiagnosisModel
