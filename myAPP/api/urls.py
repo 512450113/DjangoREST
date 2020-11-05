@@ -6,6 +6,7 @@ from api import views
 urlpatterns = [
     path('userCreate/', views.UserCreatView.as_view(), name='userCreate'),
     path('userList/', views.UserListView.as_view(), name='userList'),
+    path('changePassword/', views.ChangePasswordView.as_view(), name='changePassword'),
     path('userInfoRU/<int:pk>/', views.UserInfoRUView.as_view(), name='userInfoRU'),
 
 
