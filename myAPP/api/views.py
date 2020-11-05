@@ -1,17 +1,20 @@
 import json
 
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import PatientInfo, Profile, MedicalFile, GrossDiagnosisModel
 from api.serializers import PatientListSerializer, UserProfileListSerializer, UserProfileDetailSerializer, \
     UserSerializer, PatientDetailSerializer, GrossDiagnosisModelSerializer, GrossDiagnosisModelListSerializer, \
-    MedicalFileSerializer, GrossReportSerializer, MaterialsSerializer, BiopsySerializer, DiagnosisReportSerializer
+    MedicalFileSerializer, GrossReportSerializer, MaterialsSerializer, BiopsySerializer, DiagnosisReportSerializer, \
+    ChangePasswordSerializer
 
 
 class UserCreatView(generics.CreateAPIView):
@@ -29,19 +32,30 @@ class UserListView(generics.ListAPIView):
     serializer_class = UserProfileListSerializer
 
 
-# class UserInfoView(APIView):
-#     """
-#     用户基本信息，仅本人可查看
-#     """
-#     # permission_classes = permissions.IsAuthenticated
-#
-#     def get(self, request):
-#         user = self.request.user
-#         profile = Profile.objects.get(user=user)
-#         serializer = UserProfileDetailSerializer(profile)
-#         # serializer = UserInfoSerializer(user)
-#         # 这里的Response引用对不对？
-#         return Response(serializer.data)
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    修改密码
+    """
+    serializer_class = ChangePasswordSerializer
+    model = User
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            return Response("Success.", status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserInfoRUView(generics.RetrieveUpdateAPIView):
@@ -59,8 +73,7 @@ class UserInfoRUView(generics.RetrieveUpdateAPIView):
 
 class PatientCreateView(generics.CreateAPIView):
     """
-    病人信息详情、修改
-    每个用户（医生）都能看到所有的病人，需要传入id
+    病人信息创建
     """
     serializer_class = PatientDetailSerializer
 
@@ -99,7 +112,8 @@ class GrossDiagnosisModelListView(generics.ListAPIView):
 
 class GrossDiagnosisModelRUView(generics.RetrieveUpdateAPIView):
     """
-    模版详情、修改
+    模版详情  get
+    修改  post
     """
     queryset = GrossDiagnosisModel.objects.all()
     serializer_class = GrossDiagnosisModelSerializer
@@ -107,10 +121,10 @@ class GrossDiagnosisModelRUView(generics.RetrieveUpdateAPIView):
 
 class MedicalFileLCView(generics.ListCreateAPIView):
     """
-    创建病理档案 post
-    病理档案列表 get
+    创建 post
+    列表 get
     将列表和创建放在一起，因为本表的字段较少，列表中不需要省略
-    而且，病理档案根本不需要进行修改...
+    且不需要修改、详情
     """
     queryset = MedicalFile.objects.all()
     serializer_class = MedicalFileSerializer
@@ -119,11 +133,6 @@ class MedicalFileLCView(generics.ListCreateAPIView):
         # 传入参数中有一个patient即可，内容为id
         patient = serializer.validated_data.get('patient')
         serializer.save(patient=patient)
-
-
-'''
-以上功能应该都没问题了
-'''
 
 
 class GrossReportCreatView(generics.CreateAPIView):
@@ -174,7 +183,19 @@ class DiagnosisReportCreatView(generics.CreateAPIView):
         serializer.save(doctor=doctor, medicalFile=medical_file, )
 
 
-
-
-
-
+'''
+以上应该没问题了
+'''
+# class UserInfoView(APIView):
+#     """
+#     用户基本信息，仅本人可查看
+#     """
+#     # permission_classes = permissions.IsAuthenticated
+#
+#     def get(self, request):
+#         user = self.request.user
+#         profile = Profile.objects.get(user=user)
+#         serializer = UserProfileDetailSerializer(profile)
+#         # serializer = UserInfoSerializer(user)
+#         # 这里的Response引用对不对？
+#         return Response(serializer.data)
