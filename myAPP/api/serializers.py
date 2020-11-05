@@ -27,6 +27,14 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+    """
+    用于修改密码
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+
 class UserProfileListSerializer(serializers.ModelSerializer):
     """
     Profile序列器
