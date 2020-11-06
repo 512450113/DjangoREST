@@ -11,7 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import PatientInfo, Profile, MedicalFile, GrossDiagnosisModel
+from api.models import PatientInfo, Profile, MedicalFile, GrossDiagnosisModel, GrossReport, Materials, Biopsy, \
+    DiagnosisReport
 from api.serializers import PatientListSerializer, UserProfileListSerializer, UserProfileDetailSerializer, \
     UserSerializer, PatientDetailSerializer, GrossDiagnosisModelSerializer, GrossDiagnosisModelListSerializer, \
     MedicalFileSerializer, GrossReportSerializer, MaterialsSerializer, BiopsySerializer, DiagnosisReportSerializer, \
@@ -27,10 +28,14 @@ class UserCreatView(generics.CreateAPIView):
 
 class UserListView(generics.ListAPIView):
     """
-    用户列表
+    用户List
     """
     queryset = Profile.objects.all()
     serializer_class = UserProfileListSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('name', 'sex', 'created', 'updated', 'title', 'office',)
+    search_fields = ('name',)
+    ordering = ('id',)
 
 
 class ChangePasswordView(generics.UpdateAPIView):
@@ -61,7 +66,7 @@ class ChangePasswordView(generics.UpdateAPIView):
 
 class UserInfoRUView(generics.RetrieveUpdateAPIView):
     """
-    用户信息详情、修改
+    用户信息RU
     """
     serializer_class = UserProfileDetailSerializer
 
@@ -81,15 +86,19 @@ class PatientCreateView(generics.CreateAPIView):
 
 class PatientListView(generics.ListAPIView):
     """
-    病人列表
+    病人List
     """
     queryset = PatientInfo.objects.all()
     serializer_class = PatientListSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('name', 'sex', 'created', 'updated', )
+    search_fields = ('name', 'address',)
+    ordering = ('id',)
 
 
 class PatientRUView(generics.RetrieveUpdateAPIView):
     """
-    病人信息详情、修改
+    病人信息RU
     每个用户（医生）都能看到所有的病人，需要传入id
     """
     queryset = PatientInfo.objects.all()
@@ -109,9 +118,13 @@ class GrossDiagnosisModelCreatView(generics.CreateAPIView):
 
 class GrossDiagnosisModelListView(generics.ListAPIView):
     """
-    模版列表
+    模版List
     """
     serializer_class = GrossDiagnosisModelListSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('doctor', 'name', 'category', 'created', 'updated', )
+    search_fields = ('name', 'doctor_name', )
+    ordering = ('id',)
 
     def get_queryset(self):
         category = self.request.query_params.get('category', None)
@@ -124,8 +137,7 @@ class GrossDiagnosisModelListView(generics.ListAPIView):
 
 class GrossDiagnosisModelRUView(generics.RetrieveUpdateAPIView):
     """
-    模版详情  get
-    修改  post
+    模版RU
     """
     queryset = GrossDiagnosisModel.objects.all()
     serializer_class = GrossDiagnosisModelSerializer
@@ -133,16 +145,15 @@ class GrossDiagnosisModelRUView(generics.RetrieveUpdateAPIView):
 
 class MedicalFileLCView(generics.ListCreateAPIView):
     """
+    病理档案LC
     创建 post
     列表 get
-    将列表和创建放在一起，因为本表的字段较少，列表中不需要省略
-    且不需要修改、详情
     """
     queryset = MedicalFile.objects.all()
     serializer_class = MedicalFileSerializer
     filter_backends = (OrderingFilter, SearchFilter)
-    ordering_fields = ('patient', 'created', 'updated', )
-    search_fields = ('patient',)
+    ordering_fields = ('patient_name', 'created', 'updated', )
+    search_fields = ('patient_name',)
     ordering = ('id',)
 
     def perform_create(self, serializer):
@@ -151,11 +162,18 @@ class MedicalFileLCView(generics.ListCreateAPIView):
         serializer.save(patient=patient)
 
 
-class GrossReportCreatView(generics.CreateAPIView):
+class GrossReportLCView(generics.ListCreateAPIView):
     """
-    创建大体报告
+    大体报告
+    创建 POST
+    列表 GET
     """
+    queryset = GrossReport.objects.all()
     serializer_class = GrossReportSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('doctor_name', 'created',)
+    search_fields = ('doctor_name', )
+    ordering = ('id',)
 
     def perform_create(self, serializer):
         doctor = self.request.user
@@ -163,11 +181,18 @@ class GrossReportCreatView(generics.CreateAPIView):
         serializer.save(doctor=doctor, medicalFile=medical_file, )
 
 
-class MaterialsCreatView(generics.CreateAPIView):
+class MaterialsLCView(generics.ListCreateAPIView):
     """
-    创建取材信息
+    取材信息
+    创建 POST
+    列表 GET
     """
+    queryset = Materials.objects.all()
     serializer_class = MaterialsSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('operator_name', 'created',)
+    search_fields = ('operator_name', 'area')
+    ordering = ('id',)
 
     def perform_create(self, serializer):
         operator = self.request.user
@@ -175,23 +200,37 @@ class MaterialsCreatView(generics.CreateAPIView):
         serializer.save(operator=operator, grossReport=gross_report, )
 
 
-class BiopsyCreatView(generics.CreateAPIView):
+class BiopsyLCView(generics.ListCreateAPIView):
     """
-    创建切片信息
+    切片信息
+    创建 POST
+    列表 GET
     """
+    queryset = Biopsy.objects.all()
     serializer_class = BiopsySerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('operator_name', 'created',)
+    search_fields = ('operator_name', 'area')
+    ordering = ('id',)
 
     def perform_create(self, serializer):
         operator = self.request.user
         materials = serializer.validated_data.get('materials')
-        serializer.save(operator=operator, grossReport=materials, )
+        serializer.save(operator=operator, materials=materials, )
 
 
-class DiagnosisReportCreatView(generics.CreateAPIView):
+class DiagnosisReportLCView(generics.ListCreateAPIView):
     """
-    创建诊断报告
+    诊断报告
+    创建 POST
+    列表 GET
     """
+    queryset = DiagnosisReport.objects.all()
     serializer_class = DiagnosisReportSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('doctor_name', 'created', 'category',)
+    search_fields = ('operator_name',)
+    ordering = ('id',)
 
     def perform_create(self, serializer):
         doctor = self.request.user
@@ -202,6 +241,40 @@ class DiagnosisReportCreatView(generics.CreateAPIView):
 '''
 以上应该没问题了
 '''
+
+
+class GrossReportRetrieveView(generics.RetrieveAPIView):
+    """
+    大体报告详情
+    """
+    queryset = GrossReport.objects.all()
+    serializer_class = GrossReportSerializer
+
+
+class MaterialsRetrieveView(generics.RetrieveAPIView):
+    """
+    创建取材信息详情
+    """
+    queryset = Materials.objects.all()
+    serializer_class = MaterialsSerializer
+
+
+class BiopsyRetrieveView(generics.RetrieveAPIView):
+    """
+    切片信息详情
+    """
+    queryset = Biopsy.objects.all()
+    serializer_class = BiopsySerializer
+
+
+class DiagnosisReportRetrieveView(generics.RetrieveAPIView):
+    """
+    诊断报告详情
+    """
+    queryset = DiagnosisReport.objects.all()
+    serializer_class = DiagnosisReportSerializer
+
+
 # class UserInfoView(APIView):
 #     """
 #     用户基本信息，仅本人可查看
