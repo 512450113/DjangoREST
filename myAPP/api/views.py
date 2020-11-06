@@ -106,8 +106,15 @@ class GrossDiagnosisModelListView(generics.ListAPIView):
     """
     模版列表
     """
-    queryset = GrossDiagnosisModel.objects.all()
     serializer_class = GrossDiagnosisModelListSerializer
+
+    def get_queryset(self):
+        category = self.request.query_params.get('category', None)
+        if category is not None:
+            queryset = GrossDiagnosisModel.objects.filter(category=category)
+        else:
+            queryset = GrossDiagnosisModel.objects.all()
+        return queryset
 
 
 class GrossDiagnosisModelRUView(generics.RetrieveUpdateAPIView):
