@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 # Create your views here.
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions, status
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -32,7 +33,8 @@ class UserListView(generics.ListAPIView):
     """
     queryset = Profile.objects.all()
     serializer_class = UserProfileListSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
+    filter_fields = ('sex',)
     ordering_fields = ('name', 'sex', 'created', 'updated', 'title', 'office',)
     search_fields = ('name',)
     ordering = ('id',)
@@ -90,7 +92,8 @@ class PatientListView(generics.ListAPIView):
     """
     queryset = PatientInfo.objects.all()
     serializer_class = PatientListSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
+    filter_fields = ('sex',)
     ordering_fields = ('name', 'sex', 'created', 'updated', )
     search_fields = ('name', 'address',)
     ordering = ('id',)
@@ -120,19 +123,13 @@ class GrossDiagnosisModelListView(generics.ListAPIView):
     """
     模版List
     """
+    queryset = GrossDiagnosisModel.objects.all()
     serializer_class = GrossDiagnosisModelListSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
+    filter_fields = ('category',)
     ordering_fields = ('doctor', 'name', 'category', 'created', 'updated', )
     search_fields = ('name', 'doctor_name', )
     ordering = ('id',)
-
-    def get_queryset(self):
-        category = self.request.query_params.get('category', None)
-        if category is not None:
-            queryset = GrossDiagnosisModel.objects.filter(category=category)
-        else:
-            queryset = GrossDiagnosisModel.objects.all()
-        return queryset
 
 
 class GrossDiagnosisModelRUView(generics.RetrieveUpdateAPIView):
@@ -227,7 +224,8 @@ class DiagnosisReportLCView(generics.ListCreateAPIView):
     """
     queryset = DiagnosisReport.objects.all()
     serializer_class = DiagnosisReportSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
+    filter_fields = ('category',)
     ordering_fields = ('doctor_name', 'created', 'category',)
     search_fields = ('operator_name',)
     ordering = ('id',)
