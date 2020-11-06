@@ -42,12 +42,12 @@ class UserProfileListSerializer(serializers.ModelSerializer):
     概括，用于列表展示
     医生的个人信息表
     """
-    user = serializers.CharField(source='user.username')
+    account_number = serializers.CharField(source='user.username')
 
     class Meta:
         model = Profile
-        fields = ('id', 'name', 'sex', 'user')
-        read_only_fields = ('created', 'updated',)
+        fields = ('id', 'name', 'sex', 'user', 'account_number')
+        read_only_fields = ('created', 'updated', 'account_number',)
 
 
 class UserProfileDetailSerializer(serializers.ModelSerializer):
@@ -95,11 +95,11 @@ class GrossDiagnosisModelListSerializer(serializers.ModelSerializer):
     诊断/大体模板表
     列表，粗略
     """
-    doctor = serializers.CharField(source='doctor.doctor_info_of.name')
+    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name')
 
     class Meta:
         model = GrossDiagnosisModel
-        fields = ('id', 'doctor', 'category', 'name', 'created', 'updated',)
+        fields = ('id', 'doctor', 'doctor_name', 'category', 'name', 'created', 'updated',)
         read_only_fields = ('created', 'updated',)
 
 
@@ -108,29 +108,29 @@ class GrossDiagnosisModelSerializer(serializers.ModelSerializer):
     GrossDiagnosisModel序列器
     诊断/大体模板表
     """
-    doctor = serializers.CharField(source='doctor.doctor_info_of.name')
 
     class Meta:
         model = GrossDiagnosisModel
         fields = ('id', 'doctor', 'category', 'name', 'detail', 'created', 'updated',)
-        read_only_fields = ('created', 'updated',)
+        read_only_fields = ('created', 'updated', 'doctor')
 
 
 class MedicalFileSerializer(serializers.ModelSerializer):
     """
-    MedicalFile序列器
+    MedicalFile
     病理档案表
     """
+    patient_name = serializers.CharField(source='patient.name', read_only=True)
 
     class Meta:
         model = MedicalFile
-        fields = ('id', 'patient', 'created', 'updated',)
-        read_only_fields = ('created', 'updated',)
+        fields = ('id', 'patient', 'patient_name', 'created', 'updated',)
+        read_only_fields = ('created', 'updated', )
 
 
 class GrossReportSerializer(serializers.ModelSerializer):
     """
-    GrossReport序列器
+    GrossReport
     大体报告表
     """
 
