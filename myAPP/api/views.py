@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import generics, permissions, status
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -101,6 +102,10 @@ class GrossDiagnosisModelCreatView(generics.CreateAPIView):
     """
     serializer_class = GrossDiagnosisModelSerializer
 
+    def perform_create(self, serializer):
+        doctor = self.request.user
+        serializer.save(doctor=doctor)
+
 
 class GrossDiagnosisModelListView(generics.ListAPIView):
     """
@@ -135,6 +140,10 @@ class MedicalFileLCView(generics.ListCreateAPIView):
     """
     queryset = MedicalFile.objects.all()
     serializer_class = MedicalFileSerializer
+    filter_backends = (OrderingFilter, SearchFilter)
+    ordering_fields = ('patient', 'created', 'updated', )
+    search_fields = ('patient',)
+    ordering = ('id',)
 
     def perform_create(self, serializer):
         # 传入参数中有一个patient即可，内容为id
