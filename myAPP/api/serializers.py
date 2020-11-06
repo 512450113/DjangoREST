@@ -108,10 +108,11 @@ class GrossDiagnosisModelSerializer(serializers.ModelSerializer):
     GrossDiagnosisModel序列器
     诊断/大体模板表
     """
+    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = GrossDiagnosisModel
-        fields = ('id', 'doctor', 'category', 'name', 'detail', 'created', 'updated',)
+        fields = ('id', 'doctor', 'doctor_name', 'category', 'name', 'detail', 'created', 'updated',)
         read_only_fields = ('created', 'updated', 'doctor')
 
 
@@ -133,10 +134,11 @@ class GrossReportSerializer(serializers.ModelSerializer):
     GrossReport
     大体报告表
     """
+    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = GrossReport
-        fields = ('id', 'doctor', 'detail', 'medicalFile',)
+        fields = ('id', 'doctor', 'doctor_name', 'detail', 'medicalFile', 'created',)
         read_only_fields = ('doctor', 'created',)
 
 
@@ -145,10 +147,11 @@ class MaterialsSerializer(serializers.ModelSerializer):
     Materials序列器
     取材信息表
     """
+    operator_name = serializers.CharField(source='operator.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = Materials
-        fields = ('id', 'operator', 'area', 'request', 'detail',)
+        fields = ('id', 'operator', 'operator_name',  'grossReport', 'area', 'request', 'detail', 'created',)
         read_only_fields = ('operator', 'created',)
 
 
@@ -157,10 +160,11 @@ class BiopsySerializer(serializers.ModelSerializer):
     Biopsy序列器
     切片信息表
     """
+    operator_name = serializers.CharField(source='operator.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = Biopsy
-        fields = ('id', 'operator', 'area', 'dyeingMethod', 'detail',)
+        fields = ('id', 'operator', 'operator_name', 'area', 'materials', 'dyeingMethod', 'detail', 'created',)
         read_only_fields = ('operator', 'created',)
 
 
@@ -169,8 +173,9 @@ class DiagnosisReportSerializer(serializers.ModelSerializer):
     DiagnosisReport序列器
     诊断报告表
     """
+    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = DiagnosisReport
-        fields = ('id', 'doctor', 'category', 'detail',)
+        fields = ('id', 'doctor', 'doctor_name', 'medicalFile', 'category', 'detail', 'created',)
         read_only_fields = ('doctor', 'created',)
