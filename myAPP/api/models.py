@@ -49,7 +49,9 @@ class GrossDiagnosisModel(models.Model):
     """
     Model_Choice = (
         ('Gross', '大体模版'),
-        ('Diagnosis', '诊断模版')
+        ('Diagnosis', '诊断模版'),
+        ('Materials ', '取材模版'),
+        ('Biopsy ', '切片模版'),
     )
     id = models.AutoField(primary_key=True)
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='models_of')
