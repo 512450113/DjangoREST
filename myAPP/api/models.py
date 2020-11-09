@@ -49,7 +49,10 @@ class GrossDiagnosisModel(models.Model):
     """
     Model_Choice = (
         ('Gross', '大体模版'),
-        ('Diagnosis', '诊断模版'),
+        ('Diagnosis0', '初诊模版'),
+        ('Diagnosis1', '主诊模版'),
+        ('Diagnosis2', '特诊模版'),
+        # 是否需要详细区分为：初诊模版、主诊模版？
         ('Materials ', '取材模版'),
         ('Biopsy ', '切片模版'),
     )
