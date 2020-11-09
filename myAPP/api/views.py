@@ -148,7 +148,8 @@ class MedicalFileLCView(generics.ListCreateAPIView):
     """
     queryset = MedicalFile.objects.all()
     serializer_class = MedicalFileSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
+    filter_fields = ('patient',)
     ordering_fields = ('patient_name', 'created', 'updated', )
     search_fields = ('patient_name',)
     ordering = ('id',)
@@ -167,7 +168,8 @@ class GrossReportLCView(generics.ListCreateAPIView):
     """
     queryset = GrossReport.objects.all()
     serializer_class = GrossReportSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
+    filter_fields = ('patient', 'doctor', 'medicalFile',)
     ordering_fields = ('doctor_name', 'created',)
     search_fields = ('doctor_name', )
     ordering = ('id',)
@@ -186,7 +188,8 @@ class MaterialsLCView(generics.ListCreateAPIView):
     """
     queryset = Materials.objects.all()
     serializer_class = MaterialsSerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter ,DjangoFilterBackend,)
+    filter_fields = ('operator', 'grossReport',)
     ordering_fields = ('operator_name', 'created',)
     search_fields = ('operator_name', 'area')
     ordering = ('id',)
@@ -205,7 +208,8 @@ class BiopsyLCView(generics.ListCreateAPIView):
     """
     queryset = Biopsy.objects.all()
     serializer_class = BiopsySerializer
-    filter_backends = (OrderingFilter, SearchFilter)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
+    filter_fields = ('operator', 'materials',)
     ordering_fields = ('operator_name', 'created',)
     search_fields = ('operator_name', 'area')
     ordering = ('id',)
@@ -225,7 +229,7 @@ class DiagnosisReportLCView(generics.ListCreateAPIView):
     queryset = DiagnosisReport.objects.all()
     serializer_class = DiagnosisReportSerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
-    filter_fields = ('category',)
+    filter_fields = ('category', 'doctor')
     ordering_fields = ('doctor_name', 'created', 'category',)
     search_fields = ('operator_name',)
     ordering = ('id',)
