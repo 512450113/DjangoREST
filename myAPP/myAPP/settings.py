@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    # 身份验证
+    'rest_framework.authtoken',
     'api.apps.ApiConfig',
     # 'django_mysql', # 注意：新加
     # 配置过滤
@@ -146,6 +148,12 @@ REST_FRAMEWORK = {
     # ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
+    # 配置权限
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
     # 配置过滤
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
