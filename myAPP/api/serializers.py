@@ -135,10 +135,11 @@ class GrossReportSerializer(serializers.ModelSerializer):
     大体报告表
     """
     doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
+    patient = serializers.CharField(source='medicalFile.patient.name', read_only=True)
 
     class Meta:
         model = GrossReport
-        fields = ('id', 'doctor', 'doctor_name', 'detail', 'medicalFile', 'created',)
+        fields = ('id', 'doctor', 'doctor_name', 'patient', 'detail', 'medicalFile', 'created',)
         read_only_fields = ('doctor', 'created',)
 
 
