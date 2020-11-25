@@ -169,7 +169,7 @@ class GrossReportLCView(generics.ListCreateAPIView):
     queryset = GrossReport.objects.all()
     serializer_class = GrossReportSerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
-    filter_fields = ('patient', 'doctor', 'medicalFile',)
+    filter_fields = ('doctor', 'medicalFile',)
     ordering_fields = ('doctor_name', 'created',)
     search_fields = ('doctor_name', )
     ordering = ('id',)
