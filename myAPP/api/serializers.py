@@ -46,8 +46,7 @@ class UserProfileListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'name', 'sex', 'user', 'account_number')
-        read_only_fields = ('created', 'updated', 'account_number',)
+        fields = ('id', 'name', 'sex', 'user', 'account_number', 'title', 'office')
 
 
 class UserProfileDetailSerializer(serializers.ModelSerializer):
@@ -93,13 +92,13 @@ class GrossDiagnosisModelListSerializer(serializers.ModelSerializer):
     """
     GrossDiagnosisModel序列器
     诊断/大体模板表
-    列表，粗略
+    用于展示粗略列表
     """
-    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name')
+    doctorName = serializers.CharField(source='doctor.doctor_info_of.name')
 
     class Meta:
         model = GrossDiagnosisModel
-        fields = ('id', 'doctor', 'doctor_name', 'category', 'name', 'created', 'updated',)
+        fields = ('id', 'doctor', 'doctorName', 'category', 'name', 'created', 'updated',)
         read_only_fields = ('created', 'updated',)
 
 
@@ -107,12 +106,13 @@ class GrossDiagnosisModelSerializer(serializers.ModelSerializer):
     """
     GrossDiagnosisModel序列器
     诊断/大体模板表
+    用于创建
     """
-    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
+    doctorName = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = GrossDiagnosisModel
-        fields = ('id', 'doctor', 'doctor_name', 'category', 'name', 'detail', 'created', 'updated',)
+        fields = ('id', 'doctor', 'doctorName', 'category', 'name', 'detail', 'created', 'updated',)
         read_only_fields = ('created', 'updated', 'doctor')
 
 
@@ -121,11 +121,11 @@ class MedicalFileSerializer(serializers.ModelSerializer):
     MedicalFile
     病理档案表
     """
-    patient_name = serializers.CharField(source='patient.name', read_only=True)
+    patientName = serializers.CharField(source='patient.name', read_only=True)
 
     class Meta:
         model = MedicalFile
-        fields = ('id', 'patient', 'patient_name', 'created', 'updated',)
+        fields = ('id', 'patient', 'patientName', 'created', 'updated',)
         read_only_fields = ('created', 'updated', )
 
 
@@ -134,12 +134,12 @@ class GrossReportSerializer(serializers.ModelSerializer):
     GrossReport
     大体报告表
     """
-    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
+    doctorName = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
     patient = serializers.CharField(source='medicalFile.patient.name', read_only=True)
 
     class Meta:
         model = GrossReport
-        fields = ('id', 'doctor', 'doctor_name', 'patient', 'detail', 'medicalFile', 'created',)
+        fields = ('id', 'doctor', 'doctorName', 'patient', 'detail', 'medicalFile', 'created',)
         read_only_fields = ('doctor', 'created',)
 
 
@@ -148,11 +148,11 @@ class MaterialsSerializer(serializers.ModelSerializer):
     Materials序列器
     取材信息表
     """
-    operator_name = serializers.CharField(source='operator.doctor_info_of.name', read_only=True)
+    operatorName = serializers.CharField(source='operator.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = Materials
-        fields = ('id', 'operator', 'operator_name',  'grossReport', 'area', 'request', 'detail', 'created',)
+        fields = ('id', 'operator', 'operatorName',  'grossReport', 'area', 'request', 'detail', 'created',)
         read_only_fields = ('operator', 'created',)
 
 
@@ -161,11 +161,11 @@ class BiopsySerializer(serializers.ModelSerializer):
     Biopsy序列器
     切片信息表
     """
-    operator_name = serializers.CharField(source='operator.doctor_info_of.name', read_only=True)
+    operatorName = serializers.CharField(source='operator.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = Biopsy
-        fields = ('id', 'operator', 'operator_name', 'area', 'materials', 'dyeingMethod', 'detail', 'created',)
+        fields = ('id', 'operator', 'operatorName', 'area', 'materials', 'dyeingMethod', 'detail', 'created',)
         read_only_fields = ('operator', 'created',)
 
 
@@ -174,9 +174,9 @@ class DiagnosisReportSerializer(serializers.ModelSerializer):
     DiagnosisReport序列器
     诊断报告表
     """
-    doctor_name = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
+    doctorName = serializers.CharField(source='doctor.doctor_info_of.name', read_only=True)
 
     class Meta:
         model = DiagnosisReport
-        fields = ('id', 'doctor', 'doctor_name', 'medicalFile', 'category', 'detail', 'created',)
+        fields = ('id', 'doctor', 'doctorName', 'medicalFile', 'category', 'detail', 'created',)
         read_only_fields = ('doctor', 'created',)
