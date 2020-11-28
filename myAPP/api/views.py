@@ -95,7 +95,7 @@ class PatientListView(generics.ListAPIView):
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
     filter_fields = ('sex',)
     ordering_fields = ('name', 'sex', 'created', 'updated', )
-    search_fields = ('name', 'address',)
+    search_fields = ('name', )
     ordering = ('id',)
 
 
@@ -127,8 +127,8 @@ class GrossDiagnosisModelListView(generics.ListAPIView):
     serializer_class = GrossDiagnosisModelListSerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
     filter_fields = ('category',)
-    ordering_fields = ('doctor', 'name', 'category', 'created', 'updated', )
-    search_fields = ('name', 'doctor_name', )
+    ordering_fields = ('doctor', 'doctor__doctor_info_of__name', 'name', 'category', 'created', 'updated', )
+    search_fields = ('name', 'doctor__doctor_info_of__name', )
     ordering = ('id',)
 
 
@@ -150,8 +150,8 @@ class MedicalFileLCView(generics.ListCreateAPIView):
     serializer_class = MedicalFileSerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
     filter_fields = ('patient',)
-    ordering_fields = ('patient_name', 'created', 'updated', )
-    search_fields = ('patient_name',)
+    ordering_fields = ('patient__name', 'created', 'updated', )
+    search_fields = ('patient__name',)
     ordering = ('id',)
 
     def perform_create(self, serializer):
@@ -169,9 +169,9 @@ class GrossReportLCView(generics.ListCreateAPIView):
     queryset = GrossReport.objects.all()
     serializer_class = GrossReportSerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
-    filter_fields = ('doctor', 'medicalFile',)
-    ordering_fields = ('doctor_name', 'created',)
-    search_fields = ('doctor_name', )
+    filter_fields = ('doctor', 'medicalFile', 'patient',)
+    ordering_fields = ('doctor__doctor_info_of__name', 'created',)
+    search_fields = ('doctor__doctor_info_of__name', )
     ordering = ('id',)
 
     def perform_create(self, serializer):
@@ -188,10 +188,10 @@ class MaterialsLCView(generics.ListCreateAPIView):
     """
     queryset = Materials.objects.all()
     serializer_class = MaterialsSerializer
-    filter_backends = (OrderingFilter, SearchFilter ,DjangoFilterBackend,)
+    filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
     filter_fields = ('operator', 'grossReport',)
-    ordering_fields = ('operator_name', 'created',)
-    search_fields = ('operator_name', 'area')
+    ordering_fields = ('operator__doctor_info_of__name', 'created',)
+    search_fields = ('operator__doctor_info_of__name', 'area')
     ordering = ('id',)
 
     def perform_create(self, serializer):
@@ -210,8 +210,8 @@ class BiopsyLCView(generics.ListCreateAPIView):
     serializer_class = BiopsySerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend,)
     filter_fields = ('operator', 'materials',)
-    ordering_fields = ('operator_name', 'created',)
-    search_fields = ('operator_name', 'area')
+    ordering_fields = ('operator__doctor_info_of__name', 'created',)
+    search_fields = ('operator__doctor_info_of__name', 'area')
     ordering = ('id',)
 
     def perform_create(self, serializer):
@@ -230,8 +230,8 @@ class DiagnosisReportLCView(generics.ListCreateAPIView):
     serializer_class = DiagnosisReportSerializer
     filter_backends = (OrderingFilter, SearchFilter, DjangoFilterBackend)
     filter_fields = ('category', 'doctor')
-    ordering_fields = ('doctor_name', 'created', 'category',)
-    search_fields = ('operator_name',)
+    ordering_fields = ('doctor__doctor_info_of__name', 'created', 'category',)
+    search_fields = ('doctor__doctor_info_of__name',)
     ordering = ('id',)
 
     def perform_create(self, serializer):
